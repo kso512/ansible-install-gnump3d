@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kso512/ansible-install-gnump3d.svg?branch=master)](https://travis-ci.org/kso512/ansible-install-gnump3d)
+
 # [ansible-install-gnump3d](https://galaxy.ansible.com/kso512/ansible-install-gnump3d/)
 
 An [Ansible](https://www.ansible.com/) [Role](http://docs.ansible.com/ansible/playbooks_roles.html#roles) to install the [GNUMP3d](http://https://www.gnu.org/software/gnump3d/) application from source.
