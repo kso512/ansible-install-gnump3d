@@ -1,0 +1,11 @@
+---
+# defaults file for ansible-install-gnump3d
+ansible_install_gnump3d_systemd_service_dest: /lib/systemd/system/gnump3d.service
+ansible_install_gnump3d_systemd_service_src: systemd.gnump3d.service.j2 
+ansible_install_gnump3d_conf: /etc/gnump3d/gnump3d.conf
+ansible_install_gnump3d_conf_src: gnump3d.conf.j2
+ansible_install_gnump3d_executable: /usr/bin/gnump3d
+ansible_install_gnump3d_apt_prereqs:
+  - cmake
+  - perl-modules
+

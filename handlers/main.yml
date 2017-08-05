@@ -1,0 +1,11 @@
+---
+# handlers file for ansible-install-gnump3d
+
+- name: Restart the GNUMP3d service
+  service:
+    name: gnump3d
+    state: restarted
+  tags:
+    - ansible-install-gnump3d
+    - services
+

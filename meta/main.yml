@@ -1,0 +1,23 @@
+galaxy_info:
+  author: Chris Lindbergh
+  description: Ansible role to install GNUMP3d from source
+  company: Up Elevator Public Benefit Corporation
+
+  license: BSD
+
+  min_ansible_version: 2.2
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+
+  galaxy_tags:
+    - gnump3d
+    - gnu
+    - mp3
+    - streaming
+    - media
+    - server
+
+dependencies: []

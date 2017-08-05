@@ -1,0 +1,115 @@
+---
+# tasks file for ansible-install-gnump3d
+
+#- name: Set distro-specific variables
+#  include_vars:
+#    file: "{{ item }}"
+#  with_first_found:
+#    - "{{ ansible_distribution_release }}.yml"
+#    - "default.yml"
+#  tags:
+#    - ansible-install-gnump3d
+#    - packages
+#    - files
+#    - users
+
+- name: Install pre-requisites
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  with_items:
+    - "{{ ansible_install_gnump3d_apt_prereqs }}"
+  tags:
+    - ansible-install-gnump3d
+    - packages
+
+- name: Create needed directories
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    state: directory
+    mode: 0755
+  with_items:
+    - /root/src
+    - /media/music
+  tags:
+    - ansible-install-gnump3d
+    - files
+
+- name: Download and extract tar package
+  unarchive:
+    remote_src: yes
+    dest: /root/src
+    owner: root
+    group: root
+    src: http://savannah.gnu.org/download/gnump3d/gnump3d-3.0.tar.gz
+    creates: /root/src/gnump3d-3.0
+  tags:
+    - ansible-install-gnump3d
+    - files
+
+- name: See if executable is already installed
+  stat:
+    get_checksum: False
+    get_md5: False
+    path: "{{ ansible_install_gnump3d_executable }}"
+  register: stat_output_install
+  tags:
+    - ansible-install-gnump3d
+    - files
+
+- name: If not, use make to install the compiled source
+  make:
+    chdir: /root/src/gnump3d-3.0
+    target: install
+  when: not stat_output_install.stat.exists
+  tags:
+    - ansible-install-gnump3d
+    - files
+
+- name: Generate systemd service configuration file
+  template:
+    dest: "{{ ansible_install_gnump3d_systemd_service_dest }}"
+    group: root
+    owner: root
+    mode: 0644
+    src: "{{ ansible_install_gnump3d_systemd_service_src }}"
+  when: ansible_service_mgr == "systemd"
+  notify: Restart the GNUMP3d service
+  register: systemd_service_template_output
+  tags:
+    - ansible-install-gnump3d
+    - files
+    - services
+
+- name: Validate systemd configuration files if new
+  command: "systemd-analyze verify {{ ansible_install_gnump3d_systemd_service_dest }}"
+  when: systemd_service_template_output.changed
+  tags:
+    - ansible-install-gnump3d
+    - files
+    - services
+
+- name: Generate MPD configuration file
+  template:
+    dest: "{{ ansible_install_gnump3d_conf }}"
+    owner: root
+    group: root
+    mode: 0644
+    src: "{{ ansible_install_gnump3d_conf_src }}"
+  notify: Restart the GNUMP3d service
+  tags:
+    - ansible-install-gnump3d
+    - files
+
+- name: Enable the GNUMP3d service on next boot
+  service:
+    name: gnump3d
+    enabled: yes
+  tags:
+    - ansible-install-gnump3d
+    - services
+

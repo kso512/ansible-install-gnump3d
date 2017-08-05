@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+[Unit]
+Description=GNUMP3d
+After=network.target sound.target
+
+[Service]
+ExecStart={{ ansible_install_gnump3d_executable }}
+Restart=always
+RestartSec=10
+
+# disallow writing to /usr, /bin, /sbin, ...
+ProtectSystem=yes
+
+# more paranoid security settings
+NoNewPrivileges=yes
+ProtectKernelModules=yes
+
+[Install]
+WantedBy=multi-user.target
